@@ -1,0 +1,24 @@
+# .aliases
+
+alias bat='bat -P'                      # No paging in bat
+alias ports='ss -lntup'                 # List listening ports
+alias grep='grep --color=auto'          # Colorize grep output
+alias ls='ls -F --color=auto'           # Colorize ls output
+alias la='ls -aF --color=auto'          # List all files, including hidden ones
+alias ll='ls -lahF --color=auto'        # List all files in long human-readable format
+alias l='ls'                            # Alias for ls
+alias ..='echo "cd .."; cd ..'          # Up one directory
+alias ...='echo "cd ../.."; cd ../..'   # Up two directories
+
+# Make a directory and cd into it
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Create a new bash script with executable permissions
+mkscript() {
+    if [ -f "$1" ]; then
+        return 1
+    fi
+    echo '#!/usr/bin/env bash\n\n' > "$1" && chmod u+x "$1"
+}
