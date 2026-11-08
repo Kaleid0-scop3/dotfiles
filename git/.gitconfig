@@ -1,6 +1,6 @@
 [user]
 	email = 2007.marcosimone@gmail.com
-	name = Kaleid0_scop3
+	name = Kaleid0-scop3
 [core]
 	excludesfile = ~/.gitignore
 	editor = nano
