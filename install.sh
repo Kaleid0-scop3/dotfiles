@@ -101,7 +101,7 @@ main() {
     fi
 
     # Gather submodules
-    git submodule init && git submodule update
+    git submodule update --init --recursive
     if [[ $? -ne 0 ]]; then
         echo 'Failed to initialize and update submodules.'
         exit 1
