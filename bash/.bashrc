@@ -3,7 +3,7 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-HISTFILE='~/.bash_history'
+HISTFILE="$HOME/.bash_history"
 HISTSIZE=1000
 SAVEHIST=1000
 
@@ -26,8 +26,8 @@ blue=$'\[\e[38;5;110m\]'
 PS1="${green}\u${reset}@${cyan}\h${reset} ${blue}\w${reset} \$ "
 unset reset cyan green blue
 
-OMP_CFG='~/.config/oh-my-posh/custom.omp.json'
+OMP_CFG="$HOME/.config/oh-my-posh/custom.omp.json"
 [[ -r "$OMP_CFG" ]] && eval "$(oh-my-posh init bash --config $OMP_CFG)"
 
 # Setting up aliases
-[[ -r '~/.aliases']] && . '~/.aliases'
+[[ -r "$HOME/.aliases" ]] && . "$HOME/.aliases"

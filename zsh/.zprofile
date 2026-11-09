@@ -1,3 +1,3 @@
 # .zprofile
 
-[[ -e '~/.profile' ]] && emulate sh -c 'source ~/.profile'
+[[ -r "$HOME/.profile" ]] && emulate sh -c "source $HOME/.profile"

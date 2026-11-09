@@ -15,7 +15,7 @@ unset PLUGINSDIR
 
 # Prompt
 PS1='%F{106}%n%f@%F{73}%m%f %F{110}%~%f %# '
-OMP_CFG='~/.config/oh-my-posh/custom.omp.json'
+OMP_CFG="$HOME/.config/oh-my-posh/custom.omp.json"
 if [[ -r "$OMP_CFG" ]]; then
     eval "$(oh-my-posh init zsh --config $OMP_CFG)"
 fi
@@ -53,7 +53,7 @@ zle -N edit-command-line-and-redraw-prompt
 bindkey '^x^e' edit-command-line-and-redraw-prompt
 
 # History
-HISTFILE='~/.zsh_history'
+HISTFILE="$HOME/.zsh_history"
 HISTSIZE=1000
 SAVEHIST=1000
 
@@ -61,4 +61,4 @@ SAVEHIST=1000
 setopt globdots
 
 # Alias
-[[ -r '~/.aliases']] && source '~/.aliases'
+[[ -r "$HOME/.aliases" ]] && source "$HOME/.aliases"
