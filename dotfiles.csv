@@ -1,0 +1,20 @@
+# This file contains the dotfiles to be synced in the following format:
+# source:destination
+# source is relative to the root of the repository
+# destination is an absolute path
+# One dotfile per line.
+# Empty lines and lines starting with # are ignored.
+
+bash/.bash_logout:$HOME/.bash_logout
+bash/.bash_profile:$HOME/.bash_profile
+bash/.bashrc:$HOME/.bashrc
+git/.gitconfig:$HOME/.gitconfig
+git/.gitignore:$HOME/.gitignore
+# nano/nano-syntax-highlighting:$HOME/.config/nano/nano-syntax-highlighting
+nano/nanorc:$HOME/.config/nano/nanorc
+oh-my-posh/custom.omp.json:$HOME/.config/oh-my-posh/custom.omp.json
+powershell/Microsoft.PowerShell_profile.ps1:$HOME/.config/powershell/Microsoft.PowerShell_profile.ps1
+sh/.aliases:$HOME/.aliases
+sh/.profile:$HOME/.profile
+zsh/.zprofile:$HOME/.zprofile
+zsh/.zshrc:$HOME/.zshrc

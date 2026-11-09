@@ -1,39 +1,60 @@
 #!/usr/bin/env bash
 
-IS_WINDOWS=
-PRINT_DOTFILES=
-
-. ./dotfiles.sh
+# Dotfiles array, populated by load_dotfiles()
+declare -A DOTFILES
 
 # Prints usage information
 usage() {
     cat << EOF
 Usage: $0 [options]
 Options:
-  -w, --windows   Set this flag for Windows machines
   -l, --list      List the dotfiles to be symlinked, then exit
   -h, --help      Show this help message
 EOF
+}
+
+# Loads a file containing dotfiles into the DOTFILES array.
+# Each line of the file must have the format:
+# source:destination
+# source is relative to the root of the repository
+# destination is an absolute path
+load_dotfiles() {
+    local file content src dst
+    file="$1"
+    if [[ ! -f "$file" ]]; then
+        echo "Dotfiles file '$file' not found."
+        return 1
+    fi
+
+    # Read each line of $file as src:dst
+    while IFS=':' read -r src dst || [[ -n "$src" ]]; do
+        # Skip empty lines and comments
+        [[ -z "$src" || "$src" =~ ^# ]] && continue
+
+        # Expand variables inside destination path
+        dst=$(envsubst <<< "$dst")
+        DOTFILES["$src"]="$dst"
+    done < "$file"
 }
 
 # Prints the dotfiles to be symlinked in the format:
 # source -> destination
 print_dotfiles() {
     local src dst
-    echo "${#dotfiles[@]} dotfiles to be symlinked:"
-    for src in "${!dotfiles[@]}"; do
-        dst="${dotfiles[$src]}"
+    echo "${#DOTFILES[@]} dotfiles to be symlinked:"
+    for src in "${!DOTFILES[@]}"; do
+        dst="${DOTFILES[$src]}"
         src="$PWD/$src"
         echo "$dst -> $src"
     done
 }
 
-# Creates symlinks for the dotfiles in the array
+# Creates symlinks for the dotfiles in the DOTFILES array
 symlink_dotfiles() {
     local src dst
-    echo "Creating symlinks for ${#dotfiles[@]} dotfiles..."
-    for src in "${!dotfiles[@]}"; do
-        dst="${dotfiles[$src]}"
+    echo "Creating symlinks for ${#DOTFILES[@]} dotfiles..."
+    for src in "${!DOTFILES[@]}"; do
+        dst="${DOTFILES[$src]}"
         src="$PWD/$src"
 
         # Ignore file if it is already symlinked to the correct source
@@ -86,17 +107,19 @@ main() {
         exit 1
     fi
 
+    # Load dotfiles from dotfiles.sh
+    load_dotfiles "dotfiles.csv"
+    if [[ $? -ne 0 ]]; then
+        echo 'Failed to read dotfiles from dotfiles.csv.'
+        exit 1
+    fi
+
     # Parse command line arguments
     for opt in "$@"; do
         case $opt in
             -l|--list)
-                PRINT_DOTFILES='yes'
-                ;;
-            -w|--windows)
-                IS_WINDOWS='yes'
-                shift
-                echo "THIS IS NOT SUPPORTED YET!"
-                exit 1
+                print_dotfiles
+                exit 0
                 ;;
             -h|--help)
                 usage
@@ -109,18 +132,6 @@ main() {
                 ;;
         esac
     done
-
-    # Replace dotfiles with windows paths if the --windows flag is set
-    if [[ "$IS_WINDOWS" == 'yes' ]]; then
-        for src in "${!windows_paths[@]}"; do
-            dotfiles["$src"]="${windows_paths[$src]}"
-        done
-    fi
-
-    if [[ "$PRINT_DOTFILES" == 'yes' ]]; then
-        print_dotfiles
-        exit 0
-    fi
 
     symlink_dotfiles
     if [[ $? -ne 0 ]]; then
