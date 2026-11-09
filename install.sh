@@ -19,31 +19,35 @@ EOF
 # Prints the dotfiles to be symlinked in the format:
 # source -> destination
 print_dotfiles() {
-    echo "${#dotfiles} dotfiles to be symlinked:"
+    local src dst
+    echo "${#dotfiles[@]} dotfiles to be symlinked:"
     for src in "${!dotfiles[@]}"; do
-        echo "${dotfiles[$src]} -> $PWD/$src"
+        dst="${dotfiles[$src]}"
+        src="$PWD/$src"
+        echo "$dst -> $src"
     done
 }
 
 # Creates symlinks for the dotfiles in the array
 symlink_dotfiles() {
-    echo "Creating symlinks for ${#dotfiles} dotfiles..."
+    local src dst
+    echo "Creating symlinks for ${#dotfiles[@]} dotfiles..."
     for src in "${!dotfiles[@]}"; do
-        src="$PWD/$src"
         dst="${dotfiles[$src]}"
+        src="$PWD/$src"
 
         # Ignore file if it is already symlinked to the correct source
-        if [[ -L "$dst" && $(readlink "$dst") == "$PWD/$src" ]]; then
-            echo "$dst is already a symlink to $src. Skipping..."
+        if [[ -L "$dst" && $(readlink "$dst") == "$src" ]]; then
+            echo "'$dst' is already a symlink to '$src'. Skipping..."
             continue
         fi
 
         # Backup existing file if it exists
-        if [[ -e "$dst" ]]; then
-            echo "$dst already exists. Backing it up to $dst.old..."
+        if [[ -e "$dst" || -L "$dst" ]]; then
+            echo "'$dst' already exists. Backing it up to '$dst.old'..."
             mv "$dst" "$dst.old"
             if [[ $? -ne 0 ]]; then
-                echo "Failed to backup $dst. 'mv' failed with code $?."
+                echo "Failed to backup '$dst'."
                 return 1
             else
                 echo 'Backup complete.'
@@ -51,10 +55,16 @@ symlink_dotfiles() {
         fi
 
         # Create the symlink
-        echo "Creating symlink from $src to $dst"
+        echo "Creating symlink from '$src' to '$dst'"
+        mkdir -p "$(dirname "$dst")"
+        if [[ $? -ne 0 ]]; then
+            echo "Failed to create directory for '$dst'."
+            return 1
+        fi
+
         ln -s "$src" "$dst"
         if [[ $? -ne 0 ]]; then
-            echo "Failed to create symlink from $src to $dst. 'ln' failed with code $?."
+            echo "Failed to create symlink from '$src' to '$dst'."
             return 1
         fi
         echo 'Symlink created.'
@@ -62,6 +72,7 @@ symlink_dotfiles() {
 }
 
 main() {
+    local opt src
     # Check if the script is being run from the root of the repository
     if [[ -d '.git' && ! -e $(basename "$0") ]]; then
         echo 'This script must be ran from the root of the repository.'
@@ -84,6 +95,8 @@ main() {
             -w|--windows)
                 IS_WINDOWS='yes'
                 shift
+                echo "THIS IS NOT SUPPORTED YET!"
+                exit 1
                 ;;
             -h|--help)
                 usage
@@ -114,6 +127,7 @@ main() {
         echo 'Failed to create symlinks for dotfiles.'
         exit 1
     fi
+    echo 'Symlinks for dotfiles created successfully.'
 }
 
 main "$@"

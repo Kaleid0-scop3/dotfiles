@@ -16,7 +16,7 @@ declare -A dotfiles=(
     ['bash/.bashrc']="$HOME/.bashrc"
     ['git/.gitconfig']="$HOME/.gitconfig"
     ['git/.gitignore']="$HOME/.gitignore"
-    ['nano/nano-syntax-highlighting']="$HOME/.config/nano/nano-syntax-highlighting"
+    # ['nano/nano-syntax-highlighting']="$HOME/.config/nano/nano-syntax-highlighting"
     ['nano/nanorc']="$HOME/.config/nano/nanorc"
     ['oh-my-posh/custom.omp.json']="$HOME/.config/oh-my-posh/custom.omp.json"
     ['powershell/Microsoft.PowerShell_profile.ps1']="$HOME/.config/powershell/Microsoft.PowerShell_profile.ps1"
@@ -31,5 +31,5 @@ declare -A dotfiles=(
 # source is relative to the root of the repository
 # destination is an absolute path
 declare -A windows_paths=(
-    ['powershell/Microsoft.PowerShell_profile.ps1']="$HOME/Documents/PowerShell"
+    ['powershell/Microsoft.PowerShell_profile.ps1']="$HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1"
 )
