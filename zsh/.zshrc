@@ -14,7 +14,7 @@ unset PLUGINSDIR
 # Prompt
 PS1='%F{106}%n%f@%F{73}%m%f %F{110}%~%f %# '
 OMP_CFG="$HOME/.config/oh-my-posh/custom.omp.json"
-[[ -r "$OMP_CFG" && -x "$(which oh-my-posh)" ]] &&
+[[ -r "$OMP_CFG" ]] && command -v oh-my-posh &&
     eval "$(oh-my-posh init zsh --config $OMP_CFG)"
 
 # Keybinds
