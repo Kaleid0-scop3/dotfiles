@@ -3,9 +3,11 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# History settings
 HISTFILE="$HOME/.bash_history"
 HISTSIZE=1000
 SAVEHIST=1000
+HISTCONTROL='ignoreboth'
 
 # Bash features
 shopt -s checkwinsize # Aggiorna la dimensione dopo ogni comando
@@ -17,6 +19,7 @@ shopt -s lithist      # Ricorda le newline nello storico di comandi multilinea
 shopt -s extglob      # Atttiva espansioni come ".{jpg,jpeg}"
 shopt -s failglob     # Errore se espansione fallisce
 shopt -s globstar     # Attiva ** per iterare recursivamente su tutte le directory
+shopt -s histappend   # Aggiungi alla fine della cronologia di comandi invece di sovrascrivere
 
 # Setting up prompt
 reset=$'\[\e[0m\]'

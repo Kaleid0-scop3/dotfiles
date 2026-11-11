@@ -16,9 +16,7 @@ unset PLUGINSDIR
 # Prompt
 PS1='%F{106}%n%f@%F{73}%m%f %F{110}%~%f %# '
 OMP_CFG="$HOME/.config/oh-my-posh/custom.omp.json"
-if [[ -r "$OMP_CFG" ]]; then
-    eval "$(oh-my-posh init zsh --config $OMP_CFG)"
-fi
+[[ -r "$OMP_CFG" && -x "$(which oh-my-posh)" ]] && eval "$(oh-my-posh init zsh --config $OMP_CFG)"
 
 # Keybinds
 bindkey '^H' backward-delete-word
@@ -56,6 +54,7 @@ bindkey '^x^e' edit-command-line-and-redraw-prompt
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=1000
 SAVEHIST=1000
+HISTCONTROL='ignoreboth'
 
 # Shell options
 setopt globdots
