@@ -13,6 +13,17 @@ Options:
 EOF
 }
 
+check_dependencies() {
+    local deps
+    deps=('git' 'envsubst')
+    for dep in "${deps[@]}"; do
+        if ! command -v "$dep" &> /dev/null; then
+            echo "Error: '$dep' is not installed. Please install it and try again."
+            return 1
+        fi
+    done
+}
+
 # Loads a file containing dotfiles into the DOTFILES array.
 # Each line of the file must have the format:
 # source:destination
@@ -97,6 +108,12 @@ main() {
     # Check if the script is being run from the root of the repository
     if [[ -d '.git' && ! -e $(basename "$0") ]]; then
         echo 'This script must be ran from the root of the repository.'
+        exit 1
+    fi
+
+    # Check for dependencies
+    if ! check_dependencies; then
+        echo 'Please install the missing dependencies and try again.'
         exit 1
     fi
 
