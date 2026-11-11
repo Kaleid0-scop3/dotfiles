@@ -17,8 +17,6 @@ mkcd() {
 
 # Create a new bash script with executable permissions
 mkscript() {
-    if [ -f "$1" ]; then
-        return 1
-    fi
+    [ -f "$1" ] && return 1
     echo -e '#!/usr/bin/env bash\n\n' > "$1" && chmod u+x "$1"
 }

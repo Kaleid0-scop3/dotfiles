@@ -3,20 +3,19 @@
 # Plugins
 PLUGINSDIR='/usr/share/zsh/plugins'
 
-if [[ -r "$PLUGINSDIR/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh" ]]; then
-	source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
-fi
+[[ -r "$PLUGINSDIR/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh" ]] &&
+    source "$PLUGINSDIR/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
 
-if [[ -r "$PLUGINSDIR/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh" ]]; then
-	source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
-fi
+[[ -r "$PLUGINSDIR/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh" ]] &&
+    source "$PLUGINSDIR/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh"
 
 unset PLUGINSDIR
 
 # Prompt
 PS1='%F{106}%n%f@%F{73}%m%f %F{110}%~%f %# '
 OMP_CFG="$HOME/.config/oh-my-posh/custom.omp.json"
-[[ -r "$OMP_CFG" && -x "$(which oh-my-posh)" ]] && eval "$(oh-my-posh init zsh --config $OMP_CFG)"
+[[ -r "$OMP_CFG" && -x "$(which oh-my-posh)" ]] &&
+    eval "$(oh-my-posh init zsh --config $OMP_CFG)"
 
 # Keybinds
 bindkey '^H' backward-delete-word

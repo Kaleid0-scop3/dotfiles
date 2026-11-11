@@ -25,7 +25,8 @@ export LESS_TERMCAP_ZW=$'\e[75m'
 export LANG='it_IT.utf-8'
 
 # Export Windows home directory if running in WSL
-[ -f '/usr/bin/wslinfo' ] && export WIN_HOME=$(wslpath -au "$(cmd.exe /c 'echo|set /p=%USERPROFILE%' 2> /dev/null)")
+[ -f '/usr/bin/wslinfo' ] &&
+    export WIN_HOME=$(wslpath -au "$(cmd.exe /c 'echo|set /p=%USERPROFILE%' 2> /dev/null)")
 
 # PATH variable setup
 ## set PATH so it includes user's private bin if it exists
