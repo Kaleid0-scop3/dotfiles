@@ -30,7 +30,7 @@ PS1="${green}\u${reset}@${cyan}\h${reset} ${blue}\w${reset} \$ "
 unset reset cyan green blue
 
 OMP_CFG="$HOME/.config/oh-my-posh/custom.omp.json"
-[[ -r "$OMP_CFG" ]] && command -v oh-my-posh &&
+[[ -r "$OMP_CFG" ]] && command -v oh-my-posh &> /dev/null &&
     eval "$(oh-my-posh init bash --config $OMP_CFG)"
 
 # Setting up aliases
