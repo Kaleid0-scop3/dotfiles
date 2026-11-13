@@ -108,8 +108,7 @@ symlink_dotfiles() {
         # Backup existing file if it exists
         if [[ -e "$dst" || -L "$dst" ]]; then
             echo "'$dst' already exists. Backing it up to '$dst.old'..."
-            mv "$dst" "$dst.old"
-            if [[ $? -ne 0 ]]; then
+            if ! mv "$dst" "$dst.old"; then
                 echo "Failed to backup '$dst'."
                 return 1
             else
@@ -119,14 +118,12 @@ symlink_dotfiles() {
 
         # Create the symlink
         echo "Creating symlink from '$src' to '$dst'"
-        mkdir -p "$(dirname $dst)"
-        if [[ $? -ne 0 ]]; then
+        if ! mkdir -p "$(dirname $dst)"; then
             echo "Failed to create directory for '$dst'."
             return 1
         fi
 
-        ln -s "$src" "$dst"
-        if [[ $? -ne 0 ]]; then
+        if ! ln -s "$src" "$dst"; then
             echo "Failed to create symlink from '$src' to '$dst'."
             return 1
         fi
@@ -144,16 +141,17 @@ clone_repos() {
         # Pull the repo if it already exists, otherwise clone it
         if [[ -d "$dst/.git" ]]; then
             echo "'$dst' already exists. Pulling latest changes from '$src'..."
-            git -C "$dst" pull &> /dev/null
-            if [[ $? -ne 0 ]]; then
+            if ! git -C "$dst" pull &> /dev/null; then
                 echo "Failed to pull latest changes from '$src' into '$dst'."
                 return 1
             fi
         else
             echo "Cloning '$src' into '$dst'..."
-            mkdir -p "$dst"
-            git clone "$src" "$dst" &> /dev/null
-            if [[ $? -ne 0 ]]; then
+            if ! mkdir -p "$dst"; then
+                echo "Failed to create directory for '$dst'."
+                return 1
+            fi
+            if ! git clone "$src" "$dst" &> /dev/null; then
                 echo "Failed to clone '$src' into '$dst'."
                 return 1
             fi
@@ -177,15 +175,13 @@ main() {
     fi
 
     # Load dotfiles from dotfiles.csv
-    load_dotfiles "dotfiles.csv"
-    if [[ $? -ne 0 ]]; then
+    if ! load_dotfiles "dotfiles.csv"; then
         echo 'Failed to read dotfiles from dotfiles.csv.'
         exit 1
     fi
 
     # Load repos from repos.csv
-    load_repos "repos.csv"
-    if [[ $? -ne 0 ]]; then
+    if ! load_repos "repos.csv"; then
         echo 'Failed to read repos from repos.csv.'
         exit 1
     fi
@@ -209,15 +205,13 @@ main() {
         esac
     done
 
-    symlink_dotfiles
-    if [[ $? -ne 0 ]]; then
+    if ! symlink_dotfiles; then
         echo 'Failed to create symlinks for dotfiles.'
         exit 1
     fi
     echo 'Symlinks for dotfiles created successfully.'
 
-    clone_repos
-    if [[ $? -ne 0 ]]; then
+    if ! clone_repos; then
         echo 'Failed to clone repositories.'
         exit 1
     fi
