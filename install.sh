@@ -26,7 +26,7 @@ check_dependencies() {
 
 # Loads a file containing dotfiles into the DOTFILES array.
 # Each line of the file must have the format:
-# source:destination
+# source,destination
 # source is relative to the root of the repository
 # destination is an absolute path
 load_dotfiles() {
@@ -37,8 +37,8 @@ load_dotfiles() {
         return 1
     fi
 
-    # Read each line of $file as src:dst
-    while IFS=':' read -r src dst || [[ -n "$src" ]]; do
+    # Read each line of $file as src,dst
+    while IFS=',' read -r src dst || [[ -n "$src" ]]; do
         # Skip empty lines and comments
         [[ -z "$src" || "$src" =~ ^# ]] && continue
 

@@ -1,8 +1,8 @@
-# This file contains the dotfiles that change paths when running on windows in the following format:
-# source:windows_destination
+# This file contains the dotfiles that change paths when running on windows in the following format,
+# source,windows_destination
 # source is relative to the root of the repository.
 # windows_destination is an absolute path.
 # One dotfile per line.
 # Empty lines and lines starting with # are ignored.
 
-powershell/Microsoft.PowerShell_profile.ps1:$HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1
+powershell/Microsoft.PowerShell_profile.ps1,$HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1
