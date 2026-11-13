@@ -3,12 +3,15 @@
 # Dotfiles array, populated by load_dotfiles()
 declare -A DOTFILES
 
+# Repos array, populated by load_repos()
+declare -A REPOS
+
 # Prints usage information
 usage() {
     cat << EOF
 Usage: $0 [options]
 Options:
-  -l, --list      List the dotfiles to be symlinked, then exit
+  -l, --list      List the dotfiles and repositories to be symlinked, then exit
   -h, --help      Show this help message
 EOF
 }
@@ -48,14 +51,42 @@ load_dotfiles() {
     done < "$file"
 }
 
-# Prints the dotfiles to be symlinked in the format:
+# Loads a file containing repos into the REPOS array.
+# Each line of the file must have the format:
+# source,destination
+# source is an url to a git repository
+# destination is an absolute path
+load_repos() {
+    local file content src dst
+    file="$1"
+    if [[ ! -f "$file" ]]; then
+        echo "Repo file '$file' not found."
+        return 1
+    fi
+
+    # Read each line of $file as src,dst
+    while IFS=',' read -r src dst || [[ -n "$src" ]]; do
+        # Skip empty lines and comments
+        [[ -z "$src" || "$src" =~ ^# ]] && continue
+
+        # Expand variables inside destination path
+        dst=$(envsubst <<< "$dst")
+        REPOS["$src"]="$dst"
+    done < "$file"
+}
+
+# Prints the dotfiles and repos to be symlinked in the format:
 # source -> destination
 print_dotfiles() {
     local src dst
-    echo "${#DOTFILES[@]} dotfiles to be symlinked:"
+    echo "${#DOTFILES[@]} dotfiles and ${#REPOS[@]} repositories to be symlinked:"
     for src in "${!DOTFILES[@]}"; do
         dst="${DOTFILES[$src]}"
         src="$PWD/$src"
+        echo "$dst -> $src"
+    done
+    for src in "${!REPOS[@]}"; do
+        dst="${REPOS[$src]}"
         echo "$dst -> $src"
     done
 }
@@ -88,7 +119,7 @@ symlink_dotfiles() {
 
         # Create the symlink
         echo "Creating symlink from '$src' to '$dst'"
-        mkdir -p "$(dirname "$dst")"
+        mkdir -p "$(dirname $dst)"
         if [[ $? -ne 0 ]]; then
             echo "Failed to create directory for '$dst'."
             return 1
@@ -100,6 +131,34 @@ symlink_dotfiles() {
             return 1
         fi
         echo 'Symlink created.'
+    done
+}
+
+# Clones the repositories in the REPOS array
+clone_repos() {
+    local src dst
+    echo "Cloning ${#REPOS[@]} repositories..."
+    for src in "${!REPOS[@]}"; do
+        dst="${REPOS[$src]}"
+
+        # Pull the repo if it already exists, otherwise clone it
+        if [[ -d "$dst/.git" ]]; then
+            echo "'$dst' already exists. Pulling latest changes from '$src'..."
+            git -C "$dst" pull &> /dev/null
+            if [[ $? -ne 0 ]]; then
+                echo "Failed to pull latest changes from '$src' into '$dst'."
+                return 1
+            fi
+        else
+            echo "Cloning '$src' into '$dst'..."
+            mkdir -p "$dst"
+            git clone "$src" "$dst" &> /dev/null
+            if [[ $? -ne 0 ]]; then
+                echo "Failed to clone '$src' into '$dst'."
+                return 1
+            fi
+        fi
+        echo 'Repository cloned or updated.'
     done
 }
 
@@ -117,17 +176,17 @@ main() {
         exit 1
     fi
 
-    # Gather submodules
-    git submodule update --init --recursive
-    if [[ $? -ne 0 ]]; then
-        echo 'Failed to initialize and update submodules.'
-        exit 1
-    fi
-
-    # Load dotfiles from dotfiles.sh
+    # Load dotfiles from dotfiles.csv
     load_dotfiles "dotfiles.csv"
     if [[ $? -ne 0 ]]; then
         echo 'Failed to read dotfiles from dotfiles.csv.'
+        exit 1
+    fi
+
+    # Load repos from repos.csv
+    load_repos "repos.csv"
+    if [[ $? -ne 0 ]]; then
+        echo 'Failed to read repos from repos.csv.'
         exit 1
     fi
 
@@ -156,6 +215,13 @@ main() {
         exit 1
     fi
     echo 'Symlinks for dotfiles created successfully.'
+
+    clone_repos
+    if [[ $? -ne 0 ]]; then
+        echo 'Failed to clone repositories.'
+        exit 1
+    fi
+    echo 'Repositories cloned successfully.'
 }
 
 main "$@"

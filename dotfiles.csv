@@ -10,7 +10,6 @@ bash/.bash_profile,$HOME/.bash_profile
 bash/.bashrc,$HOME/.bashrc
 git/.gitconfig,$HOME/.gitconfig
 git/.gitignore,$HOME/.gitignore
-# nano/nano-syntax-highlighting,$HOME/.config/nano/nano-syntax-highlighting
 nano/nanorc,$HOME/.config/nano/nanorc
 oh-my-posh/custom.omp.json,$HOME/.config/oh-my-posh/custom.omp.json
 powershell/Microsoft.PowerShell_profile.ps1,$HOME/.config/powershell/Microsoft.PowerShell_profile.ps1

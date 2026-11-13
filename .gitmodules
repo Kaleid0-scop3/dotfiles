@@ -1,3 +1,0 @@
-[submodule "nano/nano-syntax-highlighting"]
-	path = nano/nano-syntax-highlighting
-	url = https://github.com/galenguyer/nano-syntax-highlighting.git

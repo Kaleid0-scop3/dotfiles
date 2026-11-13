@@ -1,0 +1,8 @@
+# This file contains the repositories to be synced in the following format,
+# source,destination
+# source is an url
+# destination is an url to a git repository
+# One repo per line.
+# Empty lines and lines starting with # are ignored.
+
+https://github.com/galenguyer/nano-syntax-highlighting.git,$HOME/.config/nano/nano-syntax-highlighting
