@@ -1,6 +1,5 @@
 # .aliases
 
-alias bat='bat -P'                      # No paging in bat
 alias ports='ss -lntup'                 # List listening ports
 alias grep='grep --color=auto'          # Colorize grep output
 alias ls='ls -F --color=auto'           # Colorize ls output
@@ -16,7 +15,18 @@ mkcd() {
 }
 
 # Create a new bash script with executable permissions
+# usage: mkscript FILE...
 mkscript() {
-    [ -f "$1" ] && return 1
-    echo -e '#!/usr/bin/env bash\n\n' > "$1" && chmod u+x "$1"
+    if [ $# -lt 1 ]; then
+        echo 'mkscript: missing file operand' 1>&2
+        echo 'usage: mkscript FILE...' 1>&2
+        return 1
+    fi
+    for f in "$@"; do
+        if [ -f "$f" ]; then
+            echo "mkscript: unable to create script \"$f\". File already exists" 1>&2
+            return 1
+        fi
+        echo -e '#!/usr/bin/env bash\n\n' > "$f" && chmod u+x "$f"
+    done
 }
